@@ -1,15 +1,20 @@
-%This script serves for laminate calculation 
+%% This script serves for laminate calculation
+
 clc
 clear all
 close all
 
 %% Input data
-E1=20010000; 
-E2=1301000;
-G12=1001000;
-v12=0.3;
-angle=[45 0]; %stacking from bottom
-t=[0.005 0.005]; %stacking from bottom
+E1=57450;
+E2=57450;
+G12=2630;
+v12=0.037;
+angle=[0 45 0 0 45 0 0 45 0]; %stacking from bottom
+t=[0.22 0.22 0.22 0.22 0.22 0.22 0.22 0.22 0.22]; %stacking from bottom
+
+%% Load vector F=[Nx Ny Nz Mx My Mz]
+
+F=[90.93 0 0 0 0 0]';
 
 %% Lamina stiffness matrix Q and its transformation Q_bar (stiffness matrix of 1 ply)
 
@@ -50,10 +55,6 @@ D=D_temp/3;
 
 ABD=[A B;B D];
 
-%% Load vector F=[Nx Ny Nz Mx My Mz]
-
-F=[250 0 0 0 0 0]';
-
 %% Solve epsilon zero and k vector
 
 Eps_K=ABD\F;
@@ -61,25 +62,88 @@ Eps_K=ABD\F;
 Eps0=[Eps_K(1,1);Eps_K(2,1);Eps_K(3,1)];
 K=[Eps_K(4,1);Eps_K(5,1);Eps_K(6,1)];
 
-%% Strain of each ply top and bottom in general coordinate system
+%% Ply boundary coordinate matrix 'z'
+% matrix containing coordiantes of plies boundaries (no. ply vs bottom, top)
 
-Res_strain=zeros(2*length(angle),7); %ply top, bottom vs z, ex, ey, gxy, e1,e2,g12
-
-Eps_xy=zeros(3,length(h));
-
-for i=1:length(h)
-    Eps_xy(:,i)=Eps0+h(1,i)*K; %column is border of plies, row is ex,ey,gxy
+z=zeros(length(angle),2); 
+j=1;
+while j<=length(angle)
+    z(j,1)=h(1,j);
+    z(j,2)=h(1,j+1);
+    j=j+1;
 end
 
+%% Strain at bottom and top of each ply in general coordinate system (panel coordinate system)
 
-%% Strain of each ply top and bottom in material coordinate system (along fibres)
-
-Eps_12=zeros(3,length(h));
+Eps_xy=zeros(3,2,length(angle)); 
 
 for i=1:length(angle)
-    T=transform(angle(1,i));
-    for j=1:length(h)        
-        Eps_12(:,j)=T*Eps_xy(:,j); %column is border of plies, row is ex,ey,gxy
+    for j=1:2
+        Eps_xy(:,j,i)=Eps0+z(i,j)*K; %3d matrix with engineering shear strain, general strain for top, bottom of each ply
     end
 end
+
+Eps_xy_tens=Eps_xy;
+
+% loop to convert engineering strain to tensorial shear strain (important for further transposition to material coordinate system)
+%tensorial shear strain epsilon_xy=gama_xy/2, half of engineering shear strain
+
+for i=1:length(angle) 
+    for j=1:2
+        Eps_xy_tens(3,j,i)=Eps_xy_tens(3,j,i)/2;
+    end
+end
+
+%% Strain at bottom and top of each ply in material coordinate system (along fibres of a particular ply)
+
+Eps_12=zeros(3,2,length(angle));
+
+for i=1:length(angle)
+    if angle(1,i)==0
+        for j=1:2      
+            Eps_12(:,j,i)=Eps_xy_tens(:,j,i); 
+        end
+    else
+    T=transform(angle(1,i));
+        for j=1:2      
+            Eps_12(:,j,i)=T*Eps_xy_tens(:,j,i); 
+        end
+    end
+end
+
+% loop to convert tensorial shear strain 'epsilon_12' to engineering shear strain 'gama_12'
+
+for i=1:length(angle) 
+    for j=1:2
+        Eps_12(3,j,i)=Eps_12(3,j,i)*2; %3d material strain matrix with ENGINEERING shear strain 'gama_12'  
+    end
+end
+
+%% Stress at bottom and top of each ply in general coordinate system (panel coordinate system)
+
+Sig_xy=zeros(3,2,length(angle)); 
+
+for i=1:length(angle)
+    for j=1:2
+        Sig_xy(:,j,i)=Q_bar_laminate(:,:,i)*Eps_xy(:,j,i); %3d matrix with stress, sig x, sig y, tau xy vs bottom, top vs ply
+    end
+end
+
+%% Stress at bottom and top of each ply in material coordinate system (along fibres of a particular ply)
+
+Sig_12=zeros(3,2,length(angle));
+
+for i=1:length(angle)
+    if angle(1,i)==0
+        for j=1:2      
+            Sig_12(:,j,i)=Sig_xy(:,j,i); 
+        end
+    else
+    T=transform(angle(1,i));
+        for j=1:2      
+            Sig_12(:,j,i)=T*Sig_xy(:,j,i); 
+        end
+    end
+end
+
 
