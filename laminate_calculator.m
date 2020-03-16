@@ -5,6 +5,10 @@ clear all
 close all
 
 %% Input data
+
+%xlsread function 
+
+
 E1=57450;
 E2=57450;
 G12=2630;
@@ -145,5 +149,25 @@ for i=1:length(angle)
         end
     end
 end
+
+%% Summary table
+
+
+
+%% Plotting
+
+% figure 
+% subplot(2,1,1);
+% plot(t,x(2,:))
+% hold on
+% plot(t,x(4,:))
+% plot(t,x(6,:))
+% fplot(0,[0,t(i)],'--k')
+% title('Strain in general coor system','Interpreter','latex')
+% xlabel('Strain [-]','Interpreter','latex')
+% legend('Displacement - d [m]','Velocity - $\dot d$ [m/s]',...
+%     'Acceleration - $\ddot d [m/s^2]$','Interpreter','latex')
+
+%% Strength criterions
 
 
