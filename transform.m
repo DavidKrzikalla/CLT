@@ -1,5 +1,9 @@
 %% This function transforms values using T matrix
 
+% Author: David Krzikalla
+% Source of theory:
+% - Nettles, A.T., 1994. Basic mechanics of laminated composite plates. (NASA)
+
 function T=transform(angle)
 
 phi=deg2rad(angle);

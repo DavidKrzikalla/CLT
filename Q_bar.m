@@ -1,5 +1,9 @@
 %% This function calculates Q_bar matrix for given ply
 
+% Author: David Krzikalla
+% Source of theory:
+% - Nettles, A.T., 1994. Basic mechanics of laminated composite plates. (NASA)
+
 function [Q_bar]=Q_bar(E1,E2,G12,v12,angle)
 
 v21=E2/E1*v12;

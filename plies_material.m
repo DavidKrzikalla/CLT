@@ -1,4 +1,7 @@
 %% This function serves for manipulating imported material data
+
+% Author: David Krzikalla
+
 % Imported data are checked for non-zero values to gain number of plies
 % Then not selected plies (zero-value material data) are filtered out and
 % material variables vectors are formed
