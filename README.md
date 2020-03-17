@@ -1,2 +1,2 @@
 # CLT
-Analytical classical laminate theory calculation
+Classical laminate theory calculation
