@@ -6,17 +6,11 @@ close all
 
 %% Input data
 
-%xlsread function 
+material_import = xlsread('laminate_calc_theory_material_data.xlsx','Stacking_sequence','D5:M15');
 
+[angle,E1,E2,G12,v12,sig_tL,sig_dL,sig_tT,sig_dT,tau_TL,t]=plies_material(material_import);
 
-E1=57450;
-E2=57450;
-G12=2630;
-v12=0.037;
-angle=[0 45 0 0 45 0 0 45 0]; %stacking from bottom
-t=[0.22 0.22 0.22 0.22 0.22 0.22 0.22 0.22 0.22]; %stacking from bottom
-
-%% Load vector F=[Nx Ny Nz Mx My Mz]
+%% Load vector F=[Nx Ny Nz Mx My Mz]'
 
 F=[90.93 0 0 0 0 0]';
 
@@ -25,7 +19,7 @@ F=[90.93 0 0 0 0 0]';
 Q_bar_laminate=zeros(3,3,length(angle)); %prepare 3D global laminate matrix
 
 for i=1:length(angle) %numbering of matrices corresponds to numbering of plies from bottom
-    Q_bar_laminate(:,:,i)=Q_bar(E1,E2,G12,v12,angle(1,i));
+    Q_bar_laminate(:,:,i)=Q_bar(E1(1,i),E2(1,i),G12(1,i),v12(1,i),angle(1,i));
 end
     
 %% Global stiffness matrix, ABD matrix
