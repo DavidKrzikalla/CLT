@@ -1,11 +1,16 @@
 %% This script serves for laminate calculation
-% Comments come here
+% Author: David Krzikalla
+% Source of theory:
+% - Nettles, A.T., 1994. Basic mechanics of laminated composite plates. (NASA)
+% - 
+
 
 clc
 clear all
 close all
 
 %% Input data
+%Material data for each ply are imported from Excel sheet 
 
 material_import = xlsread('laminate_calc_theory_material_data.xlsx','Stacking_sequence','D5:M15');
 
@@ -13,7 +18,7 @@ material_import = xlsread('laminate_calc_theory_material_data.xlsx','Stacking_se
 
 %% Load vector F=[Nx Ny Nz Mx My Mz]'
 
-F=[90.93 0 0 0 0 0]';
+F=[0 0 0 5 0 0]';
 
 %% Lamina stiffness matrix Q and its transformation Q_bar (stiffness matrix of 1 ply)
 
@@ -147,21 +152,21 @@ end
 
 %% Summary table
 
-
+[Eps_res, Sig_res]=results_table(Eps_xy,Eps_12,Sig_xy,Sig_12,z,angle);
 
 %% Plotting
 
 % figure 
-% subplot(2,1,1);
+% subplot(3,1,1);
 % plot(t,x(2,:))
 % hold on
+% subplot(3,1,2);
 % plot(t,x(4,:))
+% subplot(3,1,3);
 % plot(t,x(6,:))
 % fplot(0,[0,t(i)],'--k')
 % title('Strain in general coor system','Interpreter','latex')
 % xlabel('Strain [-]','Interpreter','latex')
-% legend('Displacement - d [m]','Velocity - $\dot d$ [m/s]',...
-%     'Acceleration - $\ddot d [m/s^2]$','Interpreter','latex')
 
 %% Strength criterions
 
