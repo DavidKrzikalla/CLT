@@ -1,9 +1,9 @@
-%% This script serves for laminate calculation
+%% This script serves for calculation of stress and strain within a laminate plate
 % Author: David Krzikalla
-% Source of theory:
-% - Nettles, A.T., 1994. Basic mechanics of laminated composite plates. (NASA)
-% - 
 
+% Classical Laminate Theory used
+% Source of theory:
+% - Nettles, A.T., 1994. Basic mechanics of laminated composite plates. (NASA) 
 
 clc
 clear all
@@ -14,7 +14,7 @@ close all
 
 material_import = xlsread('laminate_calc_theory_material_data.xlsx','Stacking_sequence','D5:M15');
 
-[angle,E1,E2,G12,v12,sig_tL,sig_dL,sig_tT,sig_dT,tau_TL,t]=plies_material(material_import);
+[angle,E1,E2,G12,v12,sig_tL,sig_cL,sig_tT,sig_cT,tau_TL,t]=plies_material(material_import);
 
 %% Load vector F=[Nx Ny Nz Mx My Mz]'
 
@@ -108,9 +108,9 @@ for i=1:length(angle)
             Eps_12(:,j,i)=Eps_xy_tens(:,j,i); 
         end
     else
-    T=transform(angle(1,i));
+    Strain_table=transform(angle(1,i));
         for j=1:2      
-            Eps_12(:,j,i)=T*Eps_xy_tens(:,j,i); 
+            Eps_12(:,j,i)=Strain_table*Eps_xy_tens(:,j,i); 
         end
     end
 end
@@ -143,31 +143,29 @@ for i=1:length(angle)
             Sig_12(:,j,i)=Sig_xy(:,j,i); 
         end
     else
-    T=transform(angle(1,i));
+    Strain_table=transform(angle(1,i));
         for j=1:2      
-            Sig_12(:,j,i)=T*Sig_xy(:,j,i); 
+            Sig_12(:,j,i)=Strain_table*Sig_xy(:,j,i); 
         end
     end
 end
 
-%% Summary table
+%% Summary tables
 
-[Eps_res, Sig_res]=results_table(Eps_xy,Eps_12,Sig_xy,Sig_12,z,angle);
+[Eps_res, Sig_res,Z_coor]=results_table(Eps_xy,Eps_12,Sig_xy,Sig_12,z,angle);
+
+Strain_table=table(Eps_res(:,1),Eps_res(:,2),Eps_res(:,3),Eps_res(:,4),Eps_res(:,5),Eps_res(:,6),Eps_res(:,7),Eps_res(:,8));
+Strain_table.Properties.VariableNames = {'Ply_No' 'Z_coordinate' 'E_x' 'E_y' 'Gama_xy' 'E_1' 'E_2' 'Gama_12'};
+disp(Strain_table);
+
+Stress_table=table(Sig_res(:,1),Sig_res(:,2),Sig_res(:,3),Sig_res(:,4),Sig_res(:,5),Sig_res(:,6),Sig_res(:,7),Sig_res(:,8));
+Stress_table.Properties.VariableNames = {'Ply_No' 'Z_coordinate' 'S_x' 'S_y' 'Tau_xy' 'S_1' 'S_2' 'Tau_12'};
+disp(Stress_table);
 
 %% Plotting
 
-% figure 
-% subplot(3,1,1);
-% plot(t,x(2,:))
-% hold on
-% subplot(3,1,2);
-% plot(t,x(4,:))
-% subplot(3,1,3);
-% plot(t,x(6,:))
-% fplot(0,[0,t(i)],'--k')
-% title('Strain in general coor system','Interpreter','latex')
-% xlabel('Strain [-]','Interpreter','latex')
+plotting(Eps_res,Sig_res, Z_coor,h)
 
-%% Strength criterions
+%% Failure criterions
 
 
