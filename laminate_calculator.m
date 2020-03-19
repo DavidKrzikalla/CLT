@@ -18,7 +18,7 @@ material_import = xlsread('laminate_calc_theory_material_data.xlsx','Stacking_se
 
 %% Load vector F=[Nx Ny Nz Mx My Mz]'
 
-F=[0 0 0 5 0 0]';
+F=[0 0 0 50 0 0]';
 
 %% Lamina stiffness matrix Q and its transformation Q_bar (stiffness matrix of 1 ply)
 
