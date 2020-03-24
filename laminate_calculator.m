@@ -4,6 +4,10 @@
 % Classical Laminate Theory used
 % Source of theory:
 % - Nettles, A.T., 1994. Basic mechanics of laminated composite plates. (NASA) 
+% - add sources for criterions
+
+% Before making any conclusion, firstly get familiar with aspects of
+% failure criterions
 
 clc
 clear all
@@ -18,7 +22,7 @@ material_import = xlsread('laminate_calc_theory_material_data.xlsx','Stacking_se
 
 %% Load vector F=[Nx Ny Nz Mx My Mz]'
 
-F=[0 0 0 50 0 0]';
+F=[90.93 0 0 0 0 0]';
 
 %% Lamina stiffness matrix Q and its transformation Q_bar (stiffness matrix of 1 ply)
 
@@ -168,4 +172,18 @@ plotting(Eps_res,Sig_res, Z_coor,h)
 
 %% Failure criterions
 
+% Max stress criterion
+
+RF_max_stress=max_stress_criterion(Sig_12,sig_tL,sig_cL,sig_tT,sig_cT,tau_TL);
+
+% Tsai-Wu criterion
+%Probably it is not gonna be applied here. Requires biaxial tensile failure testing
+
+% Tsai-Hill criterion
+% Assumes the same strength in tension and compression
+% !!! Check out your material data before using this criterion !!!
+
+RF_tsai_hill=tsai_hill(Sig_12,sig_tL,sig_tT,tau_TL);
+
+% Hoffman criterion
 
