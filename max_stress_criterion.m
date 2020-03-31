@@ -32,4 +32,7 @@ RF_max_stress=zeros(size(Sig_12,3),1);
 for i=size(FI,3):-1:1
     RF_max_stress(i,1)=min(min(FI(:,:,i)));
 end
+
+RF_max_stress=round(RF_max_stress,3);
+
 end
