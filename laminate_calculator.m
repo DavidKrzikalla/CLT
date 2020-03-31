@@ -9,10 +9,17 @@
 % Before making any conclusion, firstly get familiar with aspects of
 % failure criterions
 
+%% Initiation phase
+
 clc
 clear all
 close all
 
+wb=waitbar(0,'Calculation in progress...');
+set(wb,'Name','Laminate Calculator');
+wbObject=findobj(wb,'Type','Patch');
+set(wbObject,'FaceColor',[0 1 0]);
+waitbar(.1);
 %% Input data
 %Material data for each ply are imported from Excel sheet 
 
@@ -32,6 +39,7 @@ for i=1:length(angle) %numbering of matrices corresponds to numbering of plies f
     Q_bar_laminate(:,:,i)=Q_bar(E1(1,i),E2(1,i),G12(1,i),v12(1,i),angle(1,i));
 end
     
+waitbar(.3);
 %% Global stiffness matrix, ABD matrix
 
 %Calculation of total laminate thickness 't_tot'
@@ -81,6 +89,7 @@ while j<=length(angle)
     j=j+1;
 end
 
+waitbar(.5);
 %% Strain at bottom and top of each ply in general coordinate system (panel coordinate system)
 
 Eps_xy=zeros(3,2,length(angle)); 
@@ -127,6 +136,7 @@ for i=1:length(angle)
     end
 end
 
+waitbar(.7);
 %% Stress at bottom and top of each ply in general coordinate system (panel coordinate system)
 
 Sig_xy=zeros(3,2,length(angle)); 
@@ -154,6 +164,7 @@ for i=1:length(angle)
     end
 end
 
+waitbar(.8);
 %% Summary tables
 
 [Eps_res, Sig_res,Z_coor]=results_table(Eps_xy,Eps_12,Sig_xy,Sig_12,z,angle);
@@ -170,20 +181,32 @@ disp(Stress_table);
 
 plotting(Eps_res,Sig_res, Z_coor,h)
 
+waitbar(.9);
 %% Failure criterions
+% Values of RFs should be higher than 1 for each criterion
 
 % Max stress criterion
-
 RF_max_stress=max_stress_criterion(Sig_12,sig_tL,sig_cL,sig_tT,sig_cT,tau_TL);
 
-% Tsai-Wu criterion
-%Probably it is not gonna be applied here. Requires biaxial tensile failure testing
-
 % Tsai-Hill criterion
-% Assumes the same strength in tension and compression
-% !!! Check out your material data before using this criterion !!!
-
-RF_tsai_hill=tsai_hill(Sig_12,sig_tL,sig_tT,tau_TL);
+RF_tsai_hill=tsai_hill(Sig_12,sig_tL,sig_tT,sig_cL,sig_cT,tau_TL);
 
 % Hoffman criterion
+RF_hoffman=hoffman(Sig_12,sig_tL,sig_tT,sig_cL,sig_cT,tau_TL);
 
+Ply_no=zeros(length(angle),1);
+j=1;
+for i=size(RF_hoffman,1):-1:1
+    Ply_no(i,1)=j;
+    j=j+1;
+end
+
+waitbar(1);
+
+RF_res=[Ply_no RF_max_stress RF_tsai_hill RF_hoffman];
+
+RF_table=table(RF_res(:,1),RF_res(:,2),RF_res(:,3),RF_res(:,4));
+RF_table.Properties.VariableNames = {'Ply_No' 'Max_stress' 'Tsai_Hill' 'Hoffman'};
+disp(RF_table);
+
+delete(wb);
