@@ -27,7 +27,8 @@ material_import = xlsread('laminate_calc_theory_material_data.xlsx','Stacking_se
 
 [angle,E1,E2,G12,v12,sig_tL,sig_cL,sig_tT,sig_cT,tau_TL,t]=plies_material(material_import);
 
-%% Load vector F=[Nx Ny Nz Mx My Mz]'
+%% Load vector F=[Nx Ny Nz Mx My Mz]' [N/mm, N/mm*mm]
+%!!! Before load input, see Excel spreadsheet for info!!!
 
 F=[90.93 0 0 0 0 0]';
 
@@ -208,5 +209,12 @@ RF_res=[Ply_no RF_max_stress RF_tsai_hill RF_hoffman];
 RF_table=table(RF_res(:,1),RF_res(:,2),RF_res(:,3),RF_res(:,4));
 RF_table.Properties.VariableNames = {'Ply_No' 'Max_stress' 'Tsai_Hill' 'Hoffman'};
 disp(RF_table);
+
+%% Longitudinal laminate stiffness - used for panel calculation 
+muxy=-(A(1,2)/A(2,2));
+muyx=-(A(1,2)/A(1,1));
+
+Ex=round((A(1,1)/t_tot)*(1-muxy*muyx),0); % Longitudinal laminate stiffness [MPa]
+fprintf('Longitudinal laminate stiffness: %.0f MPa \n',Ex);
 
 delete(wb);
