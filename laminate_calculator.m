@@ -9,6 +9,9 @@
 % Before making any conclusion, firstly get familiar with aspects of
 % failure criterions
 
+% Take this results as preliminary and for information only
+% Thorough analysis should be performed using FEM before manufacturing
+
 %% Initiation phase
 
 clc
@@ -30,7 +33,7 @@ material_import = xlsread('laminate_calc_theory_material_data.xlsx','Stacking_se
 %% Load vector F=[Nx Ny Nz Mx My Mz]' [N/mm, N/mm*mm]
 %!!! Before load input, see Excel spreadsheet for info!!!
 
-F=[90.93 0 0 0 0 0]';
+F=[182.66 0 0 0 0 0]';
 
 %% Lamina stiffness matrix Q and its transformation Q_bar (stiffness matrix of 1 ply)
 
@@ -211,6 +214,7 @@ RF_table.Properties.VariableNames = {'Ply_No' 'Max_stress' 'Tsai_Hill' 'Hoffman'
 disp(RF_table);
 
 %% Longitudinal laminate stiffness - used for panel calculation 
+% see note in theory in .xlsx file
 muxy=-(A(1,2)/A(2,2));
 muyx=-(A(1,2)/A(1,1));
 
