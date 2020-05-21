@@ -4,8 +4,9 @@
 % Calculation of panel flexural rigidity (EI) based on FSAE and FSG rules
 % Calculation of panel weights
 
-% Import data go from laminate_calc_theory_material_data.xlsx
+% Imported data are taken from laminate_calc_theory_material_data.xlsx
 % Before calculation get familiar with calc procedure aspects in the excel
+% See note about laminate stiffness in the excel file, theory tab
 
 clc
 %% Material import
@@ -15,15 +16,15 @@ baseline_tub=xlsread('laminate_calc_theory_material_data.xlsx','Stacking_sequenc
 
 %% Input data
 
-f1=1.26; % Upper face thickness [mm]
-Ef1=54478; % Upper Face Young modulus [MPa]
+f1=1; % Upper face thickness [mm]
+Ef1=36384; % Upper Face Young modulus [MPa]
 mf1=3612/2; % Upper face plane weight [g/m2]
 
-f2=1.29; % Lower face thickness [mm]
-Ef2=58105; % Lower Face Young modulus [MPa]
+f2=1; % Lower face thickness [mm]
+Ef2=36384; % Lower Face Young modulus [MPa]
 mf2=3612/2; % Lower face plane weight [g/m2]
 
-bf=200; % actual estimated vehicle panel width [mm]
+bf=400; % actual estimated vehicle panel width [mm]
 af=500; % actual estimated vehicle panel length [mm]
 
 RC= 3932; % Rig compliance [N/mm], get from SES based on steel tubes testing
